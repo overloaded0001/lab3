@@ -1,0 +1,85 @@
+import pygame
+import sys
+
+# Ініціалізація Pygame
+pygame.init()
+
+# Константи для вікна гри
+WIDTH, HEIGHT = 800, 600
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Пригода у Лабіринті")
+
+# Колір фону
+BG_COLOR = (255, 255, 255)
+# Колір персонажа
+PLAYER_COLOR = (0, 0, 255)
+
+# Початкове положення персонажа
+player_x, player_y = WIDTH // 2, HEIGHT // 2
+player_width, player_height = 50, 50
+player_speed = 5
+
+# Початкові бали
+score = 0
+
+# Функція для відображення балів
+def display_score():
+    font = pygame.font.Font(None, 36)
+    text = font.render(f"Бали: {score}", True, (0, 0, 0))
+    WIN.blit(text, (10, 10))
+
+# Головний цикл гри
+def main():
+    global player_x, player_y, score
+
+    clock = pygame.time.Clock()
+
+    running = True
+    while running:
+        clock.tick(60)
+
+        # Обробка подій
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        
+        # Оновлення руху персонажа
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            player_x -= player_speed
+        if keys[pygame.K_RIGHT]:
+            player_x += player_speed
+        if keys[pygame.K_UP]:
+            player_y -= player_speed
+        if keys[pygame.K_DOWN]:
+            player_y += player_speed
+        
+        # Обмеження пересування персонажа в межах вікна
+        player_x = max(0, min(player_x, WIDTH - player_width))
+        player_y = max(0, min(player_y, HEIGHT - player_height))
+
+        # Перевірка на зіткнення з якоюсь преграгою (наприклад, межею вікна)
+        # Якщо зіткнення відбулося, відніміть бали
+        if player_x == 0 or player_x == WIDTH - player_width or player_y == 0 or player_y == HEIGHT - player_height:
+            score -= 10
+        
+        # Обновлення балів за кожну ітерацію головного циклу
+        score += 1
+        
+        # Очищення екрану
+        WIN.fill(BG_COLOR)
+
+        # Відображення персонажа
+        pygame.draw.rect(WIN, PLAYER_COLOR, (player_x, player_y, player_width, player_height))
+
+        # Відображення балів
+        display_score()
+
+        # Оновлення вікна
+        pygame.display.update()
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
